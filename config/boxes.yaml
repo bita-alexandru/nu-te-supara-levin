@@ -1,0 +1,32 @@
+---
+boxes:
+  start:
+    positions: [0]
+    levels: [1, 2, 3, 4, 5]
+    label: "Start"
+    events: [reset]
+  random_event:
+    positions: [1]
+    levels: [1, 2, 3, 4, 5]
+    label: "Surprize, surprize!"
+    events: [fortune, unfortune, neutral]
+  class:
+    positions: [2]
+    levels: [1, 2, 3, 4, 5]
+    label: "La facultă"
+    events: [course, seminary, laboratory, quiz, homework, project, exam]
+  cafetaria:
+    positions: [3]
+    levels: [1, 2, 3, 4, 5]
+    label: "La cantină"
+    events: [good_food, bad_food, no_food]
+  spare_time:
+    positions: [4]
+    levels: [1, 2, 3, 4, 5]
+    label: "Timp liber"
+    events: [hobby, party, study, sleep]
+  neutral:
+    positions: [5]
+    levels: [1, 2, 3, 4, 5]
+    label: "Nimic nou"
+    events: [neutral]

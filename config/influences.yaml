@@ -1,0 +1,134 @@
+---
+influences:
+  studying:
+    labels:
+      - "Ai studiat"
+    intelligence:
+      minimum: +1
+      maximum: +3
+    energy:
+      minimum: -3
+      maximum: -1
+    luck:
+      minimum: 0
+      maximum: 0
+  cheating:
+    labels:
+      - "Ai copiat"
+      - "Ai folosit ChatGPT"
+    intelligence:
+      minimum: -3
+      maximum: -1
+    energy:
+      minimum: 0
+      maximum: +1
+    luck:
+      minimum: 0
+      maximum: 0
+  skipping_class:
+    labels:
+      - "Ai chiulit"
+    intelligence:
+      minimum: -3
+      maximum: -1
+    energy:
+      minimum: 0
+      maximum: +1
+    luck:
+      minimum: 0
+      maximum: 0
+  food:
+    labels:
+      - "Ai mâncat"
+    intelligence:
+      minimum: 0
+      maximum: 0
+    energy:
+      minimum: +1
+      maximum: +3
+    luck:
+      minimum: 0
+      maximum: 0
+  energy_drink:
+    labels:
+      - "Ai băut cafea"
+      - "Ai băut energizant"
+    intelligence:
+      minimum: 0
+      maximum: 0
+    energy:
+      minimum: +1
+      maximum: +3
+    luck:
+      minimum: 0
+      maximum: 0
+  hobby:
+    labels:
+      - "Ai fost la sală"
+      - "Ai cântat la un instrument"
+      - "Ai călătorit"
+      - "Ai fost într-o drumeție"
+      - "Ai fost la un film"
+      - "Ai fost la teatru"
+      - "Ai practicat o activitate plăcută"
+    intelligence:
+      minimum: 0
+      maximum: 0
+    energy:
+      minimum: 1
+      maximum: +3
+    luck:
+      minimum: 0
+      maximum: 0
+  white_night:
+    labels:
+      - "Ai făcut o noapte albă"
+      - "Nu ai dormit deloc"
+    intelligence:
+      minimum: 0
+      maximum: 0
+    energy:
+      minimum: -5
+      maximum: -3
+    luck:
+      minimum: 0
+      maximum: 0
+  illness:
+    labels:
+      - "Te-ai îmbolnvăit"
+      - "Ai prins o răceală"
+    intelligence:
+      minimum: 0
+      maximum: 0
+    energy:
+      minimum: -1
+      maximum: -3
+    luck:
+      minimum: 0
+      maximum: 0
+  lucky_charm:
+    labels:
+      - "E ziua ta norocoasă"
+      - "Porți un obiect norocos cu tine"
+    intelligence:
+      minimum: 0
+      maximum: 0
+    energy:
+      minimum: 0
+      maximum: 0
+    luck:
+      minimum: +1
+      maximum: +3
+  unfortune:
+    labels:
+      - "Astăzi ai ghinion"
+      - "Nu merg lucrurile cum ai dori"
+    intelligence:
+      minimum: 0
+      maximum: 0
+    energy:
+      minimum: 0
+      maximum: 0
+    luck:
+      minimum: -1
+      maximum: -3

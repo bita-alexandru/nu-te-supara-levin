@@ -1,0 +1,17 @@
+---
+levels:
+  1:
+    credits_to_advance: 40
+    label: "Anul I"
+  2:
+    credits_to_advance: 100
+    label: "Anul II"
+  3:
+    credits_to_advance: 160
+    label: "Anul III"
+  4:
+    credits_to_advance: 240
+    label: "Anul IV"
+  5:
+    credits_to_advance: 999
+    label: "Ai absolvit!"
