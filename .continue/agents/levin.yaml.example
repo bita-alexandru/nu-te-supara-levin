@@ -1,0 +1,17 @@
+name: levin-configuration
+version: 0.0.1
+schema: v1
+
+models:
+ - name: vllm
+   provider: vllm
+   model: AUTODETECT
+   apiBase: https://api.levi9.com/levin/v1
+   roles:
+     - chat
+     - edit
+     - autocomplete
+     - apply
+   requestOptions:
+     headers:
+       Ocp-Apim-Subscription-Key: secret-key

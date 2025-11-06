@@ -1,0 +1,219 @@
+<StudentLife>
+    <Introduction>
+        Cam așa arată viața unui student la AC (Automatică și Calculatoare) în Iași.
+        În cele ce urmează, vor fi descrise orele pe care le are acest student la facultate,
+        locurile în care poate petrece timpul liber singur sau cu colegii și prietenii,
+        locurile în care poate lua masa sau sta la un suc, cafea sau bere, transportul
+        pe care îl poate folosi, clădirile în care studiaza, biblioteca etc.
+    </Introduction>
+    <Classes>
+        <About>
+            Materiile pe care le parcurg studenții în funcție de an și specializarea aleasă.
+        </About>
+        <Items>
+            <FirstYear>
+                Algebră liniară și geometrie analitică
+                Analiză matematică
+                Programarea calculatoarelor
+                Fizică
+                Bazele funcționării calculatoarelor
+                Sport
+                Complemente de matematică
+                Matematici aplicate în inginerie
+                Statistică și prelucrarea datelor
+                Dispozitive și circuite electronice
+                Programarea calculatoarelor
+                Electrotehnică
+                Bazele informaticii
+                Matematici speciale
+                Matematici discrete
+                Metode numerice
+                Proiectare logică
+                Structuri de date
+                Grafică asistată de calculator
+            </FirstYear>
+            <SecondYear>
+                Statistică şi prelucrarea datelor
+                Dispozitive electronice şi electronică analogică
+                Electronică digitală
+                Teoria sistemelor
+                Programare orientată pe obiecte
+                Programare în limbaj de asamblare
+                Limba engleză
+                Proiectarea algoritmilor
+                Arhitectura calculatoarelor
+                Sisteme de operare
+                Paradigme de programare
+                Proiectarea sistemelor digitale
+                Proiectarea aplicațiilor orientate pe obiecte
+                Cultură şi civilizaţie europeană
+                Educație fizică și sport
+                Măsurări și traductoare
+                Tehnici de optimizare
+                Baze de date
+                Automate și microprogramare
+                Modelarea sistemelor fizice
+                Structuri de date și algoritmi
+                Electronică digitală
+                Metode numerice
+                Analiza și sinteza dispozitivelor numerice
+                Matematici speciale
+                Introducere în automatică
+            </SecondYear>
+            <ThirdYear>
+                Teoria sistemelor
+                Sisteme cu microprocesoare
+                Sisteme automate cu eșantionare
+                Baze de date
+                Limba engleză
+                Mașini și acționări electrice
+                Echipamente hidropneumatice
+                Ingineria sistemelor de programe
+                Programare independentă de platformă
+                Robotică
+                Sisteme cu evenimente discrete
+                Identificarea sistemelor
+                Arhitecturi de calculatoare
+                Sisteme de vedere artificială
+                Sisteme de achiziție și interfețe de proces
+                Procesoare numerice de semnal
+                Microcontrolere - arhitecturi și programare
+                Programare independentă de platformă - proiect
+                Sisteme automate cu eșantionare - proiect
+                Educație antreprenorială
+                Achiziţia şi prelucrarea datelor
+                Baze de date
+                Modelare şi simulare
+                Prelucrarea imaginilor
+                Reţele de calculatoare
+                Structura şi organizarea calculatoarelor
+                Sisteme distribuite
+                Sisteme de prelucrare grafică
+                Sisteme cu microprocesoare
+                Programare web
+                Practică de specialitate
+                Practică de domeniu
+                Limbaje formale şi translatoare
+                Ingineria programării
+                Economie
+            </ThirdYear>
+            <FourthYear>
+                Algoritmi paraleli şi distribuiţi
+                Inteligenţă artificială
+                Testarea sistemelor de calcul
+                Sisteme de timp real
+                Practică pentru proiectul de diplomă
+                Structuri multiprocesor
+                Arhitecturi de calcul avansate
+                Sisteme încorporate
+                Proiectarea reţelelor de calculatoare
+                Structuri hardware reconfigurabile
+                Sisteme de operare avansate
+                Sisteme tolerante la defecte
+                Sisteme multimedia
+                Marketing
+                Elaborarea proiectului de diplomă
+                Circuite VLSI
+                Sisteme de intrare - ieşire
+                Criptografie şi securitatea datelor
+                Proiectarea bazelor de date
+                Dispozitive de calcul mobile
+                Regăsirea informaţiei
+                Managementul proiectelor software
+                Programare orientată pe servicii
+                Proiectarea interfețelor utilizator
+                Proiectarea aplicațiilor web
+                Evaluarea performanțelor
+                Programarea dispozitivelor mobile
+                Vizualizarea datelor
+                Sisteme inteligente
+                Sisteme de vedere artificială
+                Proiectarea bazelor de date
+                Comerț electronic
+                Interacțiunea om - calculator
+                Securitate informațională
+                Extragerea cunoștințelor din baze de date
+                Ingineria reglării automate
+                Transmisia datelor
+                Programarea aplicațiilor de timp real
+                Documentarea și elaborarea lucrărilor tehnico-științifice
+                Practică pentru elaborarea proiectului de diplomă
+                Sisteme de conducere a roboților
+                Fabricație asistată de calculator
+                Sisteme distribuite de achiziție, monitorizare și conducere
+                Rețele de calculatoare
+                Sisteme bazate pe cunoaștere
+                Sisteme de așteptare și aplicații
+                Educație antreprenorială - Afaceri digitale
+                Comunicații în sisteme de conducere
+                Management
+                Sisteme adaptive și robuste
+                Controlul la distanță al proceselor
+                Strategii de planificare a roboţilor mobili
+                Rețele neuronale și logică fuzzy
+                Sisteme de inteligență artificială distribuite
+                Programarea aplicațiilor internet
+                Ingineria reglării automate - proiect
+                Programarea aplicațiilor de timp real - proiect
+                Sisteme bazate pe cunoaștere - proiect
+            </FourthYear>
+        </Items>
+    </Classes>
+    <FoodAndDrinks>
+        <About>
+            Locurile în care studenții pot merge să mănânce.
+        </About>
+        <Items>
+            Cantina Tudor Vladimirescu din cadrul Universității Tehnice „Gheorghe Asachi” din Iași
+            Shaormeria Class
+            Shaormeria Shabab
+        </Items>
+    </FoodAndDrinks>
+    <Groceries>
+        <About>
+            Magazinele de unde studenții pot face cumpărăturile de bază.
+        </About>
+        <Items>
+            Lidl
+            Kaufland
+        </Items>
+    </Groceries>
+    <Hangout>
+        <About>
+            Locurile în care studenții pot merge singuri sau se pot întâlni să petreacă timpul liber.
+        </About>
+        <Items>
+            Iulius Mall
+            Palas Mall
+            Cub
+            Spirală
+            Beer Zone
+            Viper Club
+            Campus Tudor Vladimirescu
+            Grădina Botanică
+            Parc Copou
+            Opera Națională Iași
+        </Items>
+    </Hangout>
+    <Study>
+        <About>
+           Locurile unde studenții merg la ore sau pot studia în voie.
+        </About>
+        <Items>
+            Biblioteca Universităţii Tehnice „Gheorghe Asachi” din Iaşi
+            Facultatea de Automatică și Calculatoare AC0-1
+        </Items>
+    </Study>
+    <Transportation>
+        <About>
+            Metodele de transport pe care studenții le utilizează.
+        </About>
+        <Items>
+            Autobuze și tramvaie CTP Iași
+            Uber, Bolt, taxi
+            Mașina proprie
+            Bicicletă, trotinetă electrică
+            Mers pe jos
+        </Items>
+    </Transportation>
+</StudentLife>
