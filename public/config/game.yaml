@@ -1,0 +1,133 @@
+---
+game:
+  player:
+    name: "Levin"
+  title:
+    "Nu te supăra, Levin! (la AC)"
+  timer:
+    initial: 0
+    unit: seconds
+  credits:
+    initial: 0
+    maximum: 999
+  dice:
+    minimum: 1
+    maximum: 6
+  stats:
+    intelligence:
+      label: "Spor academic"
+      initial: 50
+      minimum: 1
+      maximum: 100
+    energy:
+      label: "Energie"
+      initial: 50
+      minimum: 1
+      maximum: 100
+    luck:
+      label: "Noroc"
+      initial: 50
+      minimum: 1
+    money:
+      label: "Lei"
+      initial: 2000
+      maximum: 9999
+  levels:
+    initial: 1
+    maximum: 5
+    1:
+      credits_to_advance: 40
+      label: "Anul I"
+      board:
+        bottom: sccnccrc
+        right: tcfcn
+        top: tcncfcrc
+        left: tcfcn
+    2:
+      credits_to_advance: 100
+      label: "Anul II"
+      board:
+        bottom: sccncfrcncc
+        right: tcfcrcn
+        top: cnctcncfcrc
+        left: tcncfcn
+    3:
+      credits_to_advance: 160
+      label: "Anul III"
+      board:
+        bottom: sccncfrcnccnctc
+        right: tcfcrcnccn
+        top: tcnccnctcncfcrc
+        left: tcnccncfc
+    4:
+      credits_to_advance: 240
+      label: "Anul IV"
+      board:
+        bottom: sccncfrcnccnctcfcrncc
+        right: tcfcrctcfnccn
+        top: cncnrctcnccnctcncfcrc
+        left: tccnctrcncfcn
+    5:
+      credits_to_advance: 999
+      label: "Ai absolvit!"
+      board:
+        bottom: slll
+        right: l
+        top: llll
+        left: l
+  boxes:
+    start:
+      id: s
+      label: "start"
+      emoji: 🏡
+      events: [reset]
+    random_event:
+      id: r
+      label: "surpriză"
+      emoji: ❔
+      events:
+        - fortune: []
+        - unfortune: []
+        - neutral: []
+    class:
+      id: c
+      label: "facultă"
+      emoji: 🏫
+      events:
+        - course: []
+        - seminary: []
+        - laboratory: []
+        - quiz: []
+        - homework: []
+        - project: []
+        - exam: []
+    food:
+      id: f
+      label: "ceva bun"
+      emoji: 🍽️
+      events: 
+        - good_food: []
+        - bad_food: []
+        - no_food: []
+    spare_time:
+      id: t
+      label: "timp liber"
+      emoji: 🍹
+      events:
+        - hobby: []
+        - party: []
+        - study: []
+        - sleep: []
+    neutral:
+      id: n
+      label: "nimic nou"
+      emoji: 🥱
+      events:
+        - neutral: []
+    levi9:
+      id: l
+      label: "Levi9"
+      emoji: 9️⃣
+      events:
+        - levi9:
+          - "Te așteptăm la Levi9 :)"
