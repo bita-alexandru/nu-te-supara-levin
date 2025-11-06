@@ -91,7 +91,7 @@ game:
         - neutral: []
     class:
       id: c
-      label: "facultă"
+      label: "facultate"
       emoji: 🏫
       events:
         - course: []

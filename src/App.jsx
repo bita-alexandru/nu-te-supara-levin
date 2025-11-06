@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { levinChat } from "./levinLLM.js";
+import { geminiChat } from "./geminiLLM.js";
 import { loadConfig, extractStudentRefs, parseBoard, initialStats, clampStats, computeEventOutcome, saveState, loadState } from "./engine.js";
 
 function Popup({ title, story, lines = [], options = [], onChoose, onClose, actionLabel = "OK" }) {
@@ -12,12 +12,12 @@ function Popup({ title, story, lines = [], options = [], onChoose, onClose, acti
             <div style={{marginBottom:8, whiteSpace:'pre-wrap'}}>{story}</div>
           )}
           {lines.map((line, i) => (
-            <div key={i} className="row"><div>{line.left}</div><div className={`delta ${line.deltaClass||''}`}>{line.right}</div></div>
+            <div key={i} className="row"><div>{line.left}</div><div className={`delta ${line.deltaClass||''}`} style={{...(line.rightStyle||{}), fontWeight: line.bold ? 700 : undefined}}>{line.right}</div></div>
           ))}
           {Array.isArray(options) && options.length>0 && (
             <div style={{display:'flex', gap:8, flexWrap:'wrap', marginTop:8}}>
               {options.map((opt, i) => (
-                <button key={i} className="icon-btn" onClick={() => onChoose && onChoose(i)}>{opt.label || `Opțiunea ${i+1}`}</button>
+                <button key={i} className="icon-btn" style={{ textAlign:'left' }} onClick={() => onChoose && onChoose(i)}>{opt.label || `Opțiunea ${i+1}`}</button>
               ))}
             </div>
           )}
@@ -174,15 +174,42 @@ export default function App() {
   const diceMin = cfg?.game?.dice?.minimum ?? 1;
   const diceMax = cfg?.game?.dice?.maximum ?? 6;
 
-  const boxColor = (type) => ({
-    s: '#111827',
-    c: '#60a5fa',
-    r: '#f87171',
-    f: '#fde047',
-    t: '#86efac',
-    n: '#94a3b8',
-    l: '#f0abfc',
-  }[type] || '#334155');
+  // Log color by stat key, bold
+  const statColor = (key) => ({
+    energy: '#fde047',      // yellow
+    money: '#22c55e',       // green
+    luck: '#60a5fa',        // blue
+    intelligence: '#f0abfc',// pink
+    credits: '#111827',     // black
+  }[key] || '#334155');
+
+  function sanitizeLLMJsonText(text) {
+    if (!text) return '';
+    let s = String(text).trim();
+    // strip leading ```json or ``` and trailing ```
+    if (s.startsWith('```')) {
+      s = s.replace(/^```json\s*/i, '');
+      s = s.replace(/^```\s*/i, '');
+      s = s.replace(/```\s*$/i, '');
+    }
+    return s.trim();
+  }
+  function parseLLMJson(text) {
+    if (!text) return null;
+    // try cleaned parse first
+    const cleaned = sanitizeLLMJsonText(text);
+    const tryParse = (t) => { try { return JSON.parse(t); } catch { return null; } };
+    let obj = tryParse(cleaned);
+    if (!obj) {
+      // fallback: extract first JSON object from arbitrary text
+      const i = cleaned.indexOf('{');
+      const j = cleaned.lastIndexOf('}');
+      if (i !== -1 && j !== -1 && j > i) {
+        obj = tryParse(cleaned.slice(i, j + 1));
+      }
+    }
+    return obj;
+  }
 
   async function onRoll() {
     if (!board || !cfg || !stats) return;
@@ -220,11 +247,21 @@ export default function App() {
           const startIdx = newBoard.path.findIndex(c => c.type === 's');
           curPos = startIdx >= 0 ? startIdx : 0;
           setPos(curPos);
-          setPopup({
-            title: `Felicitări! Ai trecut în ${cfg.game.levels[curLevel].label}`,
-            lines: [],
-            onClose: () => setPopup(null),
-          });
+          if (curLevel >= cfg.game.levels.maximum) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            setTimerStart(null);
+            setPopup({
+              title: 'Levin a absolvit AC! Ura!',
+              lines: [],
+              onClose: () => setPopup(null),
+            });
+          } else {
+            setPopup({
+              title: `Felicitări! Ai trecut în ${cfg.game.levels[curLevel].label}`,
+              lines: [],
+              onClose: () => setPopup(null),
+            });
+          }
           break; // stop remaining steps; new level starts fresh at start
         }
       }
@@ -234,15 +271,9 @@ export default function App() {
     const tile = curBoard.path[curPos];
     const outcome = computeEventOutcome(tile.type, cfg, refs || {});
     const beforeStats = { ...curStats };
-    curStats = clampStats(cfg, {
-      intelligence: curStats.intelligence + outcome.delta.intelligence,
-      energy: curStats.energy + outcome.delta.energy,
-      luck: curStats.luck + outcome.delta.luck,
-      money: curStats.money + outcome.delta.money,
-    });
-    curCredits = Math.max(0, Math.min((cfg?.game?.credits?.maximum ?? 999), curCredits + (outcome.delta.credits||0)));
+    // We'll only apply outcome deltas if LLM content is not available
 
-    const lines = [ { left: `Ținta: ${labelForTile(tile.type)}`, right: `+${roll} pași` } ];
+    const lines = [];
     const deltas = [
       { key:'intelligence', label: cfg?.game?.stats?.intelligence?.label || 'Int' },
       { key:'energy', label: cfg?.game?.stats?.energy?.label || 'Energie' },
@@ -251,13 +282,6 @@ export default function App() {
       { key:'credits', label: 'Credite' },
     ];
     const logEntry = { time: new Date().toISOString(), title: outcome.message || 'Eveniment', tileType: tile.type, changes: [] };
-    for (const d of deltas) {
-      const v = (d.key === 'credits') ? (outcome.delta.credits||0) : (curStats[d.key] - beforeStats[d.key]);
-      if (v !== 0) {
-        lines.push({ left: d.label, right: `${v>0?'+':''}${v}`, deltaClass: v>0? 'plus' : 'minus' });
-        logEntry.changes.push({ label: d.label, value: v });
-      }
-    }
 
     const applyAfter = () => {
       setStats(curStats);
@@ -278,18 +302,27 @@ export default function App() {
         study: (refs?.study||[]).slice(0,20),
         transport: (refs?.transport||[]).slice(0,20),
       };
-      const sys = `Generează în limba română un titlu scurt și o poveste (maxim 4-5 fraze) pentru un eveniment de tip "${labelForTile(tile.type)}". Folosește contextul din listele furnizate (clase, mâncare/băuturi, ieșiri, studiu, transport) când este relevant. Opțional, propune 2-3 opțiuni relevante pentru jucător. Pentru fiecare opțiune furnizează efecte ca intervale [min,max] pentru statisticile intelligence, energy, luck, money și credits. Valorile trebuie să aibă sens pentru acțiunea propusă. NU adăuga text în afara JSON-ului.`;
+      const sys = `Generează în limba română un titlu scurt și o poveste (maxim 4-5 fraze) pentru un eveniment de tip "${labelForTile(tile.type)}". Folosește contextul din listele furnizate (clase, mâncare/băuturi, ieșiri, studiu, transport) când este relevant.
+Opțional, propune 2-3 opțiuni relevante pentru jucător. Pentru fiecare opțiune furnizează efecte ca intervale [min,max] pentru statisticile intelligence, energy, luck, money și credits.
+Reguli de realism pentru efecte:
+- credits pot fi câștigate DOAR la casetele de tip "facultate"; altfel credits trebuie să fie [0,0]. credits nu sunt niciodată negative.
+- intelligence crește la activități de studiu/corecte (curs, laborator, învățat) și poate scădea la chiul/copiat.
+- energy crește la relaxare/odihnă și scade la studiu intens, nopți nedormite, stres.
+- money crește la evenimente legate de câștig (job, bursă, câștig) și scade la cheltuieli (mâncare, distracție, transport etc.).
+Respectă aceste reguli și nu adăuga text în afara JSON-ului.`;
       const prompt = `<Prompt>\n<SystemInstruction>${sys}</SystemInstruction>\n<context>${JSON.stringify(ctx)}</context>\n<tile>${labelForTile(tile.type)}</tile>\n<format>{"title":"string","story":"string","options":[{"label":"string","effects":{"intelligence":[min,max],"energy":[min,max],"luck":[min,max],"money":[min,max],"credits":[min,max]}}]}</format>\n</Prompt>`;
-      const content = await levinChat(prompt);
-      try {
-        const parsed = JSON.parse(content);
-        if (parsed?.title) { logEntry.title = parsed.title; }
-        if (parsed?.story) { story = parsed.story; }
-        if (Array.isArray(parsed?.options)) { llmOptions = parsed.options.slice(0,3); }
-      } catch {}
+      const content = await geminiChat(prompt);
+      const parsed = parseLLMJson(content) || {};
+      if (parsed?.title) { logEntry.title = parsed.title; }
+      const storyCandidate = parsed.story || parsed.description || parsed.content || parsed.text || '';
+      if (storyCandidate) { story = storyCandidate; }
+      const rawOptions = Array.isArray(parsed.options) ? parsed.options : (Array.isArray(parsed.choices) ? parsed.choices : []);
+      if (rawOptions.length) { llmOptions = rawOptions.slice(0,3); }
     } catch (e) { console.error(e); }
 
-    const onChoose = (idx) => {
+    const llmValid = !!(story) || (Array.isArray(llmOptions) && llmOptions.length>0);
+
+    const onChoose = async (idx) => {
       const opt = llmOptions[idx];
       if (!opt || !opt.effects) { setPopup(null); applyAfter(); return; }
       // sample random deltas from provided ranges and apply
@@ -299,8 +332,10 @@ export default function App() {
         energy: rng(opt.effects.energy),
         luck: rng(opt.effects.luck),
         money: rng(opt.effects.money),
-        credits: rng(opt.effects.credits),
+        credits: Math.max(0, rng(opt.effects.credits)),
       };
+      // enforce: credits only from 'facultate' (box id 'c')
+      if (tile.type !== 'c') extra.credits = 0;
       const before = { ...curStats };
       curStats = clampStats(cfg, {
         intelligence: curStats.intelligence + extra.intelligence,
@@ -308,27 +343,110 @@ export default function App() {
         luck: curStats.luck + extra.luck,
         money: curStats.money + extra.money,
       });
-      curCredits = Math.max(0, Math.min((cfg?.game?.credits?.maximum ?? 999), curCredits + (extra.credits||0)));
+      const reqNow = cfg.game.levels[curLevel].credits_to_advance;
+      if (curLevel < cfg.game.levels.maximum) {
+        curCredits = Math.min(reqNow, Math.max(0, curCredits + (extra.credits||0)));
+      } else {
+        curCredits = Math.max(0, Math.min((cfg?.game?.credits?.maximum ?? 999), curCredits + (extra.credits||0)));
+      }
+      logEntry.selectedOption = opt.label || `Opțiunea ${idx+1}`;
       // augment popup lines and log with the choice effects
       for (const d of deltas) {
         const v = (d.key === 'credits') ? (extra.credits||0) : (curStats[d.key] - before[d.key]);
         if (v !== 0) {
-          lines.push({ left: `${d.label} (opțiune)`, right: `${v>0?'+':''}${v}`, deltaClass: v>0? 'plus' : 'minus' });
-          logEntry.changes.push({ label: d.label, value: v });
+          lines.push({ left: `${d.label} (opțiune)`, right: `${v>0?'+':''}${v}`, rightStyle: { color: statColor(d.key) }, bold: true, deltaClass: v>0? 'plus' : 'minus' });
+          logEntry.changes.push({ key: d.key, label: d.label, value: v });
         }
+      }
+      // immediate level up if requirement reached, place at start
+      if (curLevel < cfg.game.levels.maximum && curCredits >= reqNow) {
+        const { boardsByLevel } = await loadConfig();
+        curLevel = curLevel + 1;
+        const rawBoard2 = boardsByLevel?.[String(curLevel)] || cfg.game.levels[curLevel].board;
+        const newBoard = parseBoard(rawBoard2);
+        setBoard(newBoard);
+        curBoard = newBoard;
+        const startIdx = newBoard.path.findIndex(c => c.type === 's');
+        curPos = startIdx >= 0 ? startIdx : 0;
+        setPos(curPos);
+        if (curLevel >= cfg.game.levels.maximum) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          setTimerStart(null);
+          setPopup({ title: 'Levin a absolvit AC! Ura!', lines: [], onClose: () => setPopup(null) });
+        } else {
+          setPopup({ title: `Felicitări! Ai trecut în ${cfg.game.levels[curLevel].label}`, lines: [], onClose: () => setPopup(null) });
+        }
+        applyAfter();
+        return;
       }
       setPopup(null);
       applyAfter();
     };
-
-    setPopup({
-      title: logEntry.title || outcome.message || "Eveniment",
-      story,
-      lines,
-      options: llmOptions,
-      onChoose,
-      onClose: () => { setPopup(null); applyAfter(); },
-    });
+    if (llmValid) {
+      // Do not apply default deltas; wait for user choice
+      setPopup({
+        title: logEntry.title || outcome.message || "Eveniment",
+        story,
+        lines,
+        options: llmOptions,
+        onChoose,
+        onClose: () => { setPopup(null); applyAfter(); },
+      });
+    } else {
+      // Apply default outcome deltas and show them
+      const delta = outcome.delta || {};
+      // enforce: credits only from 'facultate' (box id 'c')
+      if (tile.type !== 'c') delta.credits = 0;
+      curStats = clampStats(cfg, {
+        intelligence: curStats.intelligence + (delta.intelligence||0),
+        energy: curStats.energy + (delta.energy||0),
+        luck: curStats.luck + (delta.luck||0),
+        money: curStats.money + (delta.money||0),
+      });
+      const reqNow2 = cfg.game.levels[curLevel].credits_to_advance;
+      if (curLevel < cfg.game.levels.maximum) {
+        curCredits = Math.min(reqNow2, Math.max(0, curCredits + (delta.credits||0)));
+      } else {
+        curCredits = Math.max(0, Math.min((cfg?.game?.credits?.maximum ?? 999), curCredits + (delta.credits||0)));
+      }
+      for (const d of deltas) {
+        const v = (d.key === 'credits') ? (delta.credits||0) : ((delta[d.key]||0));
+        if (v !== 0) {
+          lines.push({ left: d.label, right: `${v>0?'+':''}${v}`, deltaClass: v>0? 'plus' : 'minus' });
+          logEntry.changes.push({ key: d.key, label: d.label, value: v });
+        }
+      }
+      // immediate level up if requirement reached even without passing start
+      if (curLevel < cfg.game.levels.maximum && curCredits >= reqNow2) {
+        (async () => {
+          const { boardsByLevel } = await loadConfig();
+          curLevel = curLevel + 1;
+          const rawBoard2 = boardsByLevel?.[String(curLevel)] || cfg.game.levels[curLevel].board;
+          const newBoard = parseBoard(rawBoard2);
+          setBoard(newBoard);
+          curBoard = newBoard;
+          const startIdx = newBoard.path.findIndex(c => c.type === 's');
+          curPos = startIdx >= 0 ? startIdx : 0;
+          setPos(curPos);
+          if (curLevel >= cfg.game.levels.maximum) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            setTimerStart(null);
+            setPopup({ title: 'Levin a absolvit AC! Ura!', lines: [], onClose: () => setPopup(null) });
+          } else {
+            setPopup({ title: `Felicitări! Ai trecut în ${cfg.game.levels[curLevel].label}`, lines: [], onClose: () => setPopup(null) });
+          }
+          applyAfter();
+        })();
+      } else {
+        setPopup({
+          title: logEntry.title || outcome.message || "Eveniment",
+          story,
+          lines,
+          options: [],
+          onClose: () => { setPopup(null); applyAfter(); },
+        });
+      }
+    }
   }
 
   function labelForTile(ch) {
@@ -558,12 +676,15 @@ export default function App() {
           {logs.map((e, i) => (
             <div key={i} style={{marginBottom:6}}>
               <div style={{fontWeight:600}}>{e.title}</div>
+              {e.selectedOption && (
+                <div style={{opacity:0.85, marginTop:2}}>Opțiune: <b>{e.selectedOption}</b></div>
+              )}
               {e.changes && e.changes.length>0 && (
                 <div style={{opacity:0.9}}>
                   {e.changes.map((c, j) => (
                     <div key={j}>
                       <span>{c.label} </span>
-                      <span style={{color: boxColor(e.tileType), fontWeight:700}}>{c.value>0?'+':''}{c.value}</span>
+                      <span style={{color: statColor(c.key), fontWeight:700}}>{c.value>0?'+':''}{c.value}</span>
                     </div>
                   ))}
                 </div>
@@ -595,7 +716,10 @@ export default function App() {
       {popup && (
         <Popup
           title={popup.title}
+          story={popup.story}
           lines={popup.lines || []}
+          options={popup.options || []}
+          onChoose={popup.onChoose}
           onClose={popup.onClose}
         />
       )}
