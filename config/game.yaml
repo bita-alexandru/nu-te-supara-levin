@@ -28,131 +28,71 @@ game:
       label: "Noroc"
       initial: 50
       minimum: 1
+    money:
+      label: "Lei"
+      initial: 2000
+      maximum: 9999
   levels:
     initial: 1
     maximum: 5
     1:
       credits_to_advance: 40
       label: "Anul I"
-      board: >
-        c<r<c<f<c<n<c<t
-        v.............^
-        t.............n
-        v.............^
-        c.............c
-        v.............^
-        f.............f
-        v.............^
-        c.............c
-        v.............^
-        n.............t
-        v.............^
-        s>c>c>n>c>c>r>c
+      board:
+        bottom: sccnccrc
+        right: tcfcn
+        top: tcncfcrc
+        left: tcfcn
     2:
       credits_to_advance: 100
       label: "Anul II"
-      board: >
-        c<r<c<f<c<n<c<t<c<n<c
-        v...................^
-        t...................n
-        v...................^
-        c...................c
-        v...................^
-        n...................r
-        v...................^
-        c...................c
-        v...................^
-        f...................f
-        v...................^
-        c...................c
-        v...................^
-        n...................t
-        v...................^
-        s>c>c>n>c>f>r>c>n>c>c
+      board:
+        bottom: sccncfrcncc
+        right: tcfcrcn
+        top: cnctcncfcrc
+        left: tcncfcn
     3:
       credits_to_advance: 160
       label: "Anul III"
-      board: >
-        c<r<c<f<c<n<c<t<c<n<c<c<n<c<t
-        v...........................^
-        t...........................n
-        v...........................^
-        c...........................c
-        v...........................^
-        n...........................c
-        v...........................^
-        c...........................n
-        v...........................^
-        c...........................c
-        v...........................^
-        n...........................r
-        v...........................^
-        c...........................c
-        v...........................^
-        f...........................f
-        v...........................^
-        c...........................c
-        v...........................^
-        n...........................t
-        v...........................^
-        s>c>c>n>c>f>r>c>n>c>c>n>c>t>c
+      board:
+        bottom: sccncfrcnccnctc
+        right: tcfcrcnccn
+        top: tcnccnctcncfcrc
+        left: tcnccncfc
     4:
       credits_to_advance: 240
       label: "Anul IV"
-      board: >
-        c<r<c<f<c<n<c<t<c<n<c<c<n<c<t<c<r<n<c<n<c
-        v.......................................^
-        t.......................................n
-        v.......................................^
-        c.......................................c
-        v.......................................^
-        c.......................................c
-        v.......................................^
-        n.......................................n
-        v.......................................^
-        c.......................................f
-        v.......................................^
-        t.......................................c
-        v.......................................^
-        r.......................................t
-        v.......................................^
-        c.......................................c
-        v.......................................^
-        n.......................................r
-        v.......................................^
-        c.......................................c
-        v.......................................^
-        f.......................................f
-        v.......................................^
-        c.......................................c
-        v.......................................^
-        n.......................................t
-        v.......................................^
-        s>c>c>n>c>f>r>c>n>c>c>n>c>t>c>f>c>r>n>c>c
+      board:
+        bottom: sccncfrcnccnctcfcrncc
+        right: tcfcrctcfnccn
+        top: cncnrctcnccnctcncfcrc
+        left: tccnctrcncfcn
     5:
       credits_to_advance: 999
       label: "Ai absolvit!"
-      board: >
-        l<l<l<l
-        v.....^
-        l.....l
-        v.....^
-        s>l>l>l
+      board:
+        bottom: slll
+        right: l
+        top: llll
+        left: l
   boxes:
     start:
       id: s
-      label: "Start"
+      label: "start"
+      emoji: 🏡
       events: [reset]
     random_event:
       id: r
-      label: "Surprize, surprize!"
+      label: "surpriză"
+      emoji: ❔
       events:
         - fortune: []
         - unfortune: []
         - neutral: []
     class:
       id: c
-      label: "La facultă"
+      label: "facultă"
+      emoji: 🏫
       events:
         - course: []
         - seminary: []
@@ -163,14 +103,16 @@ game:
         - exam: []
     food:
       id: f
-      label: "Ceva bun"
+      label: "ceva bun"
+      emoji: 🍽️
       events: 
         - good_food: []
         - bad_food: []
         - no_food: []
     spare_time:
       id: t
-      label: "Timp liber"
+      label: "timp liber"
+      emoji: 🍹
       events:
         - hobby: []
         - party: []
@@ -178,12 +120,14 @@ game:
         - sleep: []
     neutral:
       id: n
-      label: "Nimic nou"
+      label: "nimic nou"
+      emoji: 🥱
       events:
         - neutral: []
     levi9:
       id: l
       label: "Levi9"
+      emoji: 9️⃣
       events:
         - levi9:
           - "Te așteptăm la Levi9 :)"
